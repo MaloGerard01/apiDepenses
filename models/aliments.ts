@@ -1,3 +1,6 @@
+
+
+
 import mongoose, { Schema } from "mongoose";
 
 const alimentSchema = new Schema({
@@ -46,6 +49,15 @@ export class Aliment {
   public static async deleteAliment(id: string): Promise<any> {
     return new Promise(async (resolve) => {
       resolve(await AlimentModel.deleteOne({ _id: id }));
+    });
+  }
+
+  public static async substractStockFromAliment(id: string, nbr: number): Promise<any> {
+    return new Promise(async (resolve) => {
+      let aliment = await AlimentModel.findOne({ _id: id })
+      console.log(aliment.stock);
+      let newStock = aliment.stock - nbr;
+      return AlimentModel.findOneAndUpdate({ _id: id }, {stock: newStock} )
     });
   }
 }

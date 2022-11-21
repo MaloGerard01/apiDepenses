@@ -34,10 +34,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Plat = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const aliments_1 = require("../models/aliments");
 const platSchema = new mongoose_1.Schema({
     nom: String,
     type: String,
-    aliments: [{ nom: String, quantite: Number }],
+    aliments: [{ nom: String, quantite: Number, _id: String }],
     prix: Number
 });
 const PlatModel = mongoose_1.default.model("Plat", platSchema);
@@ -77,6 +78,22 @@ class Plat {
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
                 resolve(yield PlatModel.deleteOne({ _id: id }));
             }));
+        });
+    }
+    static achatPlats(body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //console.log(body);
+            body.forEach(plat => {
+                console.log(plat.nom + ": ");
+                plat.aliments.forEach((aliment) => __awaiter(this, void 0, void 0, function* () {
+                    //console.log(aliment._id)
+                    //console.logz
+                    let alimentDetail = yield aliments_1.Aliment.substractStockFromAliment(aliment._id, aliment.quantite);
+                    //console.log(alimentDetail);
+                }));
+            });
+            //return body;
+            //return PlatModel.findOneAndUpdate({ _id: id }, { nom: body.nom, type: body.type, aliments: body.aliments, prix: body.prix } )
         });
     }
 }

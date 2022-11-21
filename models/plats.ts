@@ -1,9 +1,10 @@
 import mongoose, { Schema } from "mongoose";
+import { Aliment } from "../models/aliments";
 
 const platSchema = new Schema({
   nom: String,
   type: String,
-  aliments: [{nom:String, quantite:Number}],
+  aliments: [{nom:String, quantite:Number,_id:String}],
   prix:Number
 });
 const PlatModel = mongoose.model("Plat", platSchema);
@@ -24,7 +25,7 @@ export class Plat {
   public static async insertPlat(body: {
     nom: string;
     type: string;
-    aliments: [{nom: string, quantite: number}],
+    aliments: [{nom: string, quantite: number, _id: string}],
     prix: number;
   }) {
     const Plat = new PlatModel({
@@ -39,9 +40,8 @@ export class Plat {
 
   public static async updatePlat(
     id: string,
-    body: { nom: string, type: string, aliments: [{nom: string, quantite: number}], prix: number }
+    body: { nom: string, type: string, aliments: [{nom: string, quantite: number, _id: string}], prix: number }
   ) {
-
     return PlatModel.findOneAndUpdate({ _id: id }, { nom: body.nom, type: body.type, aliments: body.aliments, prix: body.prix } )
   }
 
@@ -49,5 +49,21 @@ export class Plat {
     return new Promise(async (resolve) => {
       resolve(await PlatModel.deleteOne({ _id: id }));
     });
+  }
+
+  public static async achatPlats(body: [{_id: string, nom: string, type: string, aliments: [{nom: string, quantite: number, _id: string}], prix: number}]): Promise<any> {
+    //console.log(body);
+    body.forEach(plat => {
+      console.log(plat.nom + ": ")
+      plat.aliments.forEach(async aliment => {
+        //console.log(aliment._id)
+        //console.logz
+        let alimentDetail = await Aliment.substractStockFromAliment(aliment._id,aliment.quantite );
+        //console.log(alimentDetail);
+      })
+  });
+    //return body;
+    //return PlatModel.findOneAndUpdate({ _id: id }, { nom: body.nom, type: body.type, aliments: body.aliments, prix: body.prix } )
+
   }
 }

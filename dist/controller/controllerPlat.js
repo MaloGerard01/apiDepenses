@@ -95,5 +95,12 @@ class ControlerPlat {
             }
         });
     }
+    achatPlats(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //console.log(req.body)
+            let PlatDetail = yield plats_1.Plat.achatPlats(req.body);
+            res.send(PlatDetail);
+        });
+    }
 }
 exports.ControlerPlat = ControlerPlat;

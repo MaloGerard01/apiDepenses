@@ -95,6 +95,13 @@ export class ControlerPlat{
         }
     }
 
+    public async achatPlats(req,res){
+        //console.log(req.body)
+        let PlatDetail = await Plat.achatPlats(req.body);
+        res.send(PlatDetail);
+        
+    }
+
 
 
 }

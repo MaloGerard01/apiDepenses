@@ -79,5 +79,15 @@ class Aliment {
             }));
         });
     }
+    static substractStockFromAliment(id, nbr) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                let aliment = yield AlimentModel.findOne({ _id: id });
+                console.log(aliment.stock);
+                let newStock = aliment.stock - nbr;
+                return AlimentModel.findOneAndUpdate({ _id: id }, { stock: newStock });
+            }));
+        });
+    }
 }
 exports.Aliment = Aliment;

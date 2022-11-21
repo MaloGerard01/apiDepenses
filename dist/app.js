@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const controllerAliment_1 = require("./controller/controllerAliment");
 const controllerPlat_1 = require("./controller/controllerPlat");
@@ -17,6 +20,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const auth = require('../middleware/auth.ts');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const yamljs_1 = __importDefault(require("yamljs"));
+const swaggerDocument = yamljs_1.default.load('./swagger.yaml');
 /**
  * On créé une nouvelle "application" express
  */
@@ -29,7 +36,26 @@ let controllerUser = new controllerUser_1.ControlerUser();
  *
  * @example app.post('/', (req) => req.body.prop)
  */
-app.engine('php', require('ejs').renderFile);
+const swaggerDefinition = {
+    openapi: '3.0.0',
+    info: {
+        title: 'Express API for JSONPlaceholder',
+        version: '1.0.0',
+        description: 'This is a REST API application made with Express. It retrieves data from JSONPlaceholder.'
+    },
+    servers: [
+        {
+            url: 'http://localhost:3000/',
+            description: 'Development server',
+        },
+    ],
+};
+const options = {
+    swaggerDefinition,
+    apis: ['./*.js', './controller/*.js'],
+};
+const swaggerSpec = swaggerJSDoc(options);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
@@ -43,9 +69,8 @@ app.use((req, res, next) => {
     console.timeEnd();
     next();
 });
-app.get('/', (req, res) => res.render('index.php'));
 app.get('/Aliments', (req, res) => controllerAliment.getAliments(req, res));
-app.get('/getAliment/:id', auth, (req, res) => controllerAliment.getOneAliment(req, res));
+app.get('/getAliment/:id', (req, res) => controllerAliment.getOneAliment(req, res));
 app.post('/deleteAliment/:id', auth, (req, res) => controllerAliment.deleteAliment(req, res));
 app.post("/insertAliment", auth, (req, res) => controllerAliment.insertAliment(req, res));
 app.post('/updateAliment/:id', auth, (req, res) => controllerAliment.updateAliment(req, res));
@@ -54,6 +79,7 @@ app.get('/getPlat/:id', (req, res) => controllerPlat.getOnePlat(req, res));
 app.post('/deletePlat/:id', auth, (req, res) => controllerPlat.deletePlat(req, res));
 app.post("/insertPlat", auth, (req, res) => controllerPlat.insertPlat(req, res));
 app.post('/updatePlat/:id', auth, (req, res) => controllerPlat.updatePlat(req, res));
+app.post('/achatPlats', (req, res) => controllerPlat.achatPlats(req, res));
 app.post("/login", (req, res) => controllerUser.login(req, res));
 app.post('/insertUser', (req, res) => controllerUser.insertUser(req, res));
 app.listen(3000, () => {
