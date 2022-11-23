@@ -7,7 +7,6 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const auth = require('../middleware/auth.ts');
-const swaggerJSDoc= require('swagger-jsdoc');
 const swaggerUi= require('swagger-ui-express');
 import YAML from 'yamljs';
 const swaggerDocument = YAML.load('./swagger.yaml');
@@ -24,24 +23,6 @@ let controllerUser:ControlerUser = new ControlerUser();
  *
  * @example app.post('/', (req) => req.body.prop)
  */
-const swaggerDefinition= {
-    openapi:'3.0.0',
-    info:{
-        title:'Express API for JSONPlaceholder',
-        version:'1.0.0',
-        description:'This is a REST API application made with Express. It retrieves data from JSONPlaceholder.'},
-        servers:[
-            {
-                url:'http://localhost:3000/',
-                description:'Development server',
-            },
-        ],
-    };
-    const options = {
-        swaggerDefinition,// Paths to files containing OpenAPIdefinitions
-        apis:['./*.js','./controller/*.js'],
-    };
-    const swaggerSpec = swaggerJSDoc(options);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json())
@@ -91,55 +72,3 @@ function parseJwt (token) {
     return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
 }
 main().catch(err => console.log(err));
-
-
-// const alimentSchema = new Schema({
-//     nom: String, // String isshorthandfor {type: String}
-//     type: String,
-//     quantite: String,
-//     date: { type: Date, default: Date.now},
-// });
-
-
-// const AlimentModel = mongoose.model ('Aliment', alimentSchema); 
-
-// export class Aliment{
-//     public static async getAllAliments():Promise<any>{
-//         return new Promise(async (resolve) => {
-//             let listeAliments: any[] 
-//         })
-//     }
-// }
-
-// const navet = new AlimentModel({
-//     nom: "Navet", // String isshorthandfor {type: String}
-//     type: "légume",
-//     quantite: 50,
-//     date: new Date(),
-// });
-
-// AlimentModel.create(navet, function(err, small) {
-//     if (err) console.log(err);// OK !
-// });
-
-// AlimentModel.insertMany([
-//     {
-//         nom: "Navet", 
-//         type: "légume",
-//         quantite: 50,
-//         date: new Date()
-//     },
-    
-//     {
-//         nom: "Pain à burger",
-//         type: "epicerie",
-//         quantite: 20,
-//         date: new Date()
-//     },
-//     {
-//         nom: "Cheddar",
-//         type: "fromage",
-//         quantite: 20,
-//         date: new Date()
-//     }
-// ],function(err) {});
