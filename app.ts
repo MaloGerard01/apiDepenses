@@ -37,8 +37,6 @@ app.get('/getDepensesWhereUserIsConcerned/:id',(req,res)=>controllerDepense.getD
 app.delete('/deleteDepense/:id',(req,res)=>controllerDepense.deleteDepense(req,res)) 
 app.post("/insertDepense", (req,res)=> controllerDepense.insertDepense(req,res));
 app.put('/updateDepense/:id',(req,res)=>controllerDepense.updateDepense(req,res)) 
-app.post('/addUserConcerneToDepense/:id',(req,res)=>controllerDepense.addUserConcerneToDepense(req,res)) 
-app.delete('/removeUserConcerneToDepense/:id',(req,res)=>controllerDepense.removeUserConcerneToDepense(req,res)) 
 
 // Requêtes Catégories de dépenses
 app.get('/CategoriesDepense' ,(req,res)=>controllerCategorieDepense.getCategorieDepenses(req,res))
