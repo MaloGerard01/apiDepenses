@@ -32,90 +32,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.categorieDepense = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const userSchema = new mongoose_1.Schema({
-    prenom: String,
-    nom: String,
-    mdp: String,
-    email: String,
+const categorieDepenseSchema = new mongoose_1.Schema({
+    libelle: { type: String, default: "" }
 });
-const UserModel = mongoose_1.default.model("Utilisateur", userSchema);
-class User {
-    static getAllUsers() {
+const categorieDepenseModel = mongoose_1.default.model("categorieDepense", categorieDepenseSchema);
+class categorieDepense {
+    static getAllCategorieDepenses() {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                resolve(yield UserModel.find());
+                resolve(yield categorieDepenseModel.find());
             }));
         });
     }
-    static getOneUser(id) {
+    static getOneCategorieDepense(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                resolve(yield UserModel.findOne({ _id: id }));
+                resolve(yield categorieDepenseModel.findOne({ _id: id }));
             }));
         });
     }
-    static insertUser(body) {
+    static insertCategorieDepense(body) {
         return __awaiter(this, void 0, void 0, function* () {
-            const hash = yield bcrypt.hash(body.mdp, 10);
-            console.log("password : " + hash);
-            const User = new UserModel({
-                prenom: body.prenom,
-                nom: body.nom,
-                mdp: hash,
-                email: body.email,
+            const categorieDepense = new categorieDepenseModel({
+                libelle: body.libelle
             });
-            return yield User.save();
+            return yield categorieDepense.save();
         });
     }
-    static updateUser(id, body) {
+    static updateCategorieDepense(id, body) {
         return __awaiter(this, void 0, void 0, function* () {
-            // a faire
-            //return UserModel.findOneAndUpdate({ _id: id }, { nom: body.nom, mdp: body.type, aliments: body.aliments, prix: body.prix } )
+            return categorieDepenseModel.findOneAndUpdate({ _id: id }, { libelle: body.libelle });
         });
     }
-    static deleteUser(id) {
+    static deleteCategorieDepense(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                resolve(yield UserModel.deleteOne({ _id: id }));
+                resolve(yield categorieDepenseModel.deleteOne({ _id: id }));
             }));
-        });
-    }
-    static login(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield UserModel.findOne({ email: req.body.email }).then((user) => {
-                if (!user) {
-                    return res.status(401).json({
-                        error: 'User not found!'
-                    });
-                }
-                bcrypt.compare(req.body.mdp, user.mdp).then((valid) => {
-                    if (!valid) {
-                        return res.status(401).json({
-                            error: 'Incorrect password!'
-                        });
-                    }
-                    const token = jwt.sign({ userId: user._id }, 'sj4hOPdqZvxsDClm', { expiresIn: '24h' });
-                    res.status(200).json({
-                        userId: user._id,
-                        token: token
-                    });
-                }).catch((error) => {
-                    console.log(error);
-                    res.status(500).json({
-                        error: error
-                    });
-                });
-            }).catch((error) => {
-                console.log(error);
-                res.status(500).json({
-                    error: error
-                });
-            });
         });
     }
 }
-exports.User = User;
+exports.categorieDepense = categorieDepense;

@@ -9,49 +9,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ControllerUser = void 0;
-const users_1 = require("../models/users");
-class ControllerUser {
-    getUsers(req, res) {
+exports.ControlerAliment = void 0;
+const aliments_1 = require("../models/aliments");
+const bodyParser = require('body-parser');
+/* Controller qui nous servira par la suite à vérifier que :
+*
+* La requete contient les élements demandés (id dans le cas d'un get, un formulaire post complet,etc...)
+*
+* L'appel est bien authentifié
+*
+* Pour le moment nous avons un controlerAliment, mais nous pourrons faire évoluer le nom du controller plus tard
+*/
+class ControlerAliment {
+    getAliments(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let UserDetail = yield users_1.User.getAllUsers();
-            res.status(201);
-            res.send(UserDetail);
+            let listeAliments = yield aliments_1.Aliment.getAllAliments();
+            res.send(listeAliments);
         });
     }
-    getUserInfo(req, res) {
+    getOneAliment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (req.params.id == null) {
+            if (req.params.id == null || req.params.id.length != 24) {
                 res.status(406);
                 res.send();
             }
             else {
-                let UserDetail = yield users_1.User.getOneUser(req.params.id);
-                res.status(201);
-                res.send(UserDetail);
+                let alimentId = req.params.id;
+                let alimentDetail = yield aliments_1.Aliment.getOneAliment(alimentId);
+                res.send(alimentDetail);
             }
         });
     }
-    insertUser(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (req.body == null || req.body.constructor === Object && Object.keys(req.body).length === 0) {
-                res.status(406);
-                res.send();
-            }
-            else if (req.body.nom == "" || req.body.nom == undefined
-                || req.body.mdp == "" || req.body.mdp == undefined
-                || req.body.email == "" || req.body.email == undefined) {
-                res.status(400);
-                res.send();
-            }
-            else {
-                let UserDetail = yield users_1.User.insertUser(req.body);
-                res.status(201);
-                res.send(UserDetail);
-            }
-        });
-    }
-    updateUser(req, res) {
+    insertAliment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             if (req.body == null || req.body.constructor === Object && Object.keys(req.body).length === 0) {
                 res.status(406);
@@ -59,36 +48,49 @@ class ControllerUser {
             }
             else if (req.body.nom == "" || req.body.nom == undefined
                 || req.body.type == "" || req.body.type == undefined
-                || req.body.aliments == "[]" || req.body.aliments == undefined
-                || req.body.prix == "" || req.body.prix == undefined) {
+                || req.body.stock == "" || req.body.stock == undefined) {
                 res.status(400);
                 res.send();
             }
             else {
-                let UserId = req.params.id;
-                let UserDetail = yield users_1.User.updateUser(UserId, req.body);
+                let alimentDetail = yield aliments_1.Aliment.insertAliment(req.body);
                 res.status(201);
-                res.send(UserDetail);
+                res.send(alimentDetail);
             }
         });
     }
-    deleteUser(req, res) {
+    updateAliment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (req.params.id == null) {
+            if (req.params.id == null || req.params.id.length != 24 || req.body == null || req.body.constructor === Object && Object.keys(req.body).length === 0) {
+                res.status(406);
+                res.send();
+            }
+            else if (req.body.nom == "" || req.body.nom == undefined
+                || req.body.type == "" || req.body.type == undefined
+                || req.body.stock == "" || req.body.stock == undefined) {
+                res.status(400);
+                res.send();
+            }
+            else {
+                let alimentId = req.params.id;
+                let alimentDetail = yield aliments_1.Aliment.updateAliment(alimentId, req.body);
+                res.status(201);
+                res.send(alimentDetail);
+            }
+        });
+    }
+    deleteAliment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (req.params.id == null || req.params.id.length != 24) {
                 res.status(406);
                 res.send();
             }
             else {
-                let UserDetail = yield users_1.User.deleteUser(req.params.id);
-                res.status(201);
-                res.send(UserDetail);
+                let alimentId = req.params.id;
+                let alimentDetail = yield aliments_1.Aliment.deleteAliment(alimentId);
+                res.send(alimentDetail);
             }
         });
     }
-    login(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield users_1.User.login(req, res);
-        });
-    }
 }
-exports.ControllerUser = ControllerUser;
+exports.ControlerAliment = ControlerAliment;

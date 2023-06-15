@@ -32,90 +32,62 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.Aliment = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const userSchema = new mongoose_1.Schema({
-    prenom: String,
+const alimentSchema = new mongoose_1.Schema({
     nom: String,
-    mdp: String,
-    email: String,
+    type: String,
+    stock: Number,
+    date: { type: Date, default: Date.now },
 });
-const UserModel = mongoose_1.default.model("Utilisateur", userSchema);
-class User {
-    static getAllUsers() {
+const AlimentModel = mongoose_1.default.model("Aliment", alimentSchema);
+class Aliment {
+    static getAllAliments() {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                resolve(yield UserModel.find());
+                resolve(yield AlimentModel.find());
             }));
         });
     }
-    static getOneUser(id) {
+    static getOneAliment(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                resolve(yield UserModel.findOne({ _id: id }));
+                resolve(yield AlimentModel.findOne({ _id: id }));
             }));
         });
     }
-    static insertUser(body) {
+    static insertAliment(body) {
         return __awaiter(this, void 0, void 0, function* () {
-            const hash = yield bcrypt.hash(body.mdp, 10);
-            console.log("password : " + hash);
-            const User = new UserModel({
-                prenom: body.prenom,
+            const aliment = new AlimentModel({
                 nom: body.nom,
-                mdp: hash,
-                email: body.email,
+                type: body.type,
+                stock: body.stock,
+                date: new Date(),
             });
-            return yield User.save();
+            return yield aliment.save();
         });
     }
-    static updateUser(id, body) {
+    static updateAliment(id, body) {
         return __awaiter(this, void 0, void 0, function* () {
-            // a faire
-            //return UserModel.findOneAndUpdate({ _id: id }, { nom: body.nom, mdp: body.type, aliments: body.aliments, prix: body.prix } )
+            return AlimentModel.findOneAndUpdate({ _id: id }, { nom: body.nom, type: body.type, stock: body.stock });
         });
     }
-    static deleteUser(id) {
+    static deleteAliment(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                resolve(yield UserModel.deleteOne({ _id: id }));
+                resolve(yield AlimentModel.deleteOne({ _id: id }));
             }));
         });
     }
-    static login(req, res) {
+    static substractStockFromAliment(id, nbr) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield UserModel.findOne({ email: req.body.email }).then((user) => {
-                if (!user) {
-                    return res.status(401).json({
-                        error: 'User not found!'
-                    });
-                }
-                bcrypt.compare(req.body.mdp, user.mdp).then((valid) => {
-                    if (!valid) {
-                        return res.status(401).json({
-                            error: 'Incorrect password!'
-                        });
-                    }
-                    const token = jwt.sign({ userId: user._id }, 'sj4hOPdqZvxsDClm', { expiresIn: '24h' });
-                    res.status(200).json({
-                        userId: user._id,
-                        token: token
-                    });
-                }).catch((error) => {
-                    console.log(error);
-                    res.status(500).json({
-                        error: error
-                    });
-                });
-            }).catch((error) => {
-                console.log(error);
-                res.status(500).json({
-                    error: error
-                });
-            });
+            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                let aliment = yield AlimentModel.findOne({ _id: id });
+                console.log(aliment.stock);
+                let newStock = aliment.stock - nbr;
+                return AlimentModel.findOneAndUpdate({ _id: id }, { stock: newStock });
+            }));
         });
     }
 }
-exports.User = User;
+exports.Aliment = Aliment;

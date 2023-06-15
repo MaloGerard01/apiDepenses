@@ -1,7 +1,30 @@
 import { User } from "../models/users";
 
 
-export class ControlerUser{
+export class ControllerUser{
+
+    public async getUsers(req,res){
+            let UserDetail = await User.getAllUsers();
+            res.status(201);
+            res.send(UserDetail);
+        
+    }
+
+    public async getUserInfo(req,res){
+        if(req.params.id == null)
+        {
+            res.status(406);
+            res.send();
+        }
+        else
+        {
+            let UserDetail = await User.getOneUser(req.params.id);
+            res.status(201);
+            res.send(UserDetail);
+        }
+        
+    }
+    
 
     public async insertUser(req,res){
         
@@ -46,6 +69,21 @@ export class ControlerUser{
         res.status(201);
         res.send(UserDetail);
         }
+    }
+
+    public async deleteUser(req,res){
+        if(req.params.id == null)
+        {
+            res.status(406);
+            res.send();
+        }
+        else
+        {
+            let UserDetail = await User.deleteUser(req.params.id);
+            res.status(201);
+            res.send(UserDetail);
+        }
+        
     }
 
     public async login(req, res) {

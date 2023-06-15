@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const userSchema = new Schema({
+  prenom: String,
   nom: String,
   mdp: String,
   email: String,
@@ -23,9 +24,10 @@ export class User {
   }
 
   public static async insertUser(body: {
-    nom: string;
-    mdp: string;
-    email: string;
+    prenom: string,
+    nom: string,
+    mdp: string,
+    email: string,
   }) {
     const hash = await bcrypt.hash(body.mdp, 10);
 
@@ -33,6 +35,7 @@ export class User {
 
 
     const User = new UserModel({
+      prenom: body.prenom,
       nom: body.nom,
       mdp: hash,
       email: body.email,
@@ -43,7 +46,7 @@ export class User {
 
   public static async updateUser(
     id: string,
-    body: { nom: string, mdp: string, email: string , }
+    body: { prenom:string, nom: string, mdp: string, email: string , }
   ) {
 // a faire
 

@@ -8,34 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const controllerAliment_1 = require("./controller/controllerAliment");
-const controllerPlat_1 = require("./controller/controllerPlat");
+const controllerDepense_1 = require("./controller/controllerDepense");
+const controllerCategorieDepense_1 = require("./controller/controllerCategorieDepense");
 const controllerUser_1 = require("./controller/controllerUser");
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const auth = require('../middleware/auth.ts');
-const swaggerUi = require('swagger-ui-express');
-const yamljs_1 = __importDefault(require("yamljs"));
-const swaggerDocument = yamljs_1.default.load('./swagger.yaml');
-/**
- * On créé une nouvelle "application" express
- */
 const app = express();
-let controllerAliment = new controllerAliment_1.ControlerAliment();
-let controllerPlat = new controllerPlat_1.ControlerPlat(); // a corriger
-let controllerUser = new controllerUser_1.ControlerUser();
-/**
- * On dit à Express que l'on souhaite parser le body des requêtes en JSON
- *
- * @example app.post('/', (req) => req.body.prop)
- */
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+let controllerUser = new controllerUser_1.ControllerUser();
+let controllerDepense = new controllerDepense_1.ControllerDepense();
+let controllerCategorieDepense = new controllerCategorieDepense_1.ControllerCategorieDepense();
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
@@ -49,25 +34,34 @@ app.use((req, res, next) => {
     console.timeEnd();
     next();
 });
-app.get('/Aliments', (req, res) => controllerAliment.getAliments(req, res));
-app.get('/getAliment/:id', (req, res) => controllerAliment.getOneAliment(req, res));
-app.post('/deleteAliment/:id', auth, (req, res) => controllerAliment.deleteAliment(req, res));
-app.post("/insertAliment", auth, (req, res) => controllerAliment.insertAliment(req, res));
-app.post('/updateAliment/:id', auth, (req, res) => controllerAliment.updateAliment(req, res));
-app.get('/Plats', (req, res) => controllerPlat.getPlats(req, res));
-app.get('/getPlat/:id', (req, res) => controllerPlat.getOnePlat(req, res));
-app.post('/deletePlat/:id', auth, (req, res) => controllerPlat.deletePlat(req, res));
-app.post("/insertPlat", auth, (req, res) => controllerPlat.insertPlat(req, res));
-app.post('/updatePlat/:id', auth, (req, res) => controllerPlat.updatePlat(req, res));
-app.post('/achatPlats', (req, res) => controllerPlat.achatPlats(req, res));
+// Requêtes dépenses
+app.get('/Depenses', (req, res) => controllerDepense.getDepenses(req, res));
+app.get('/getDepense/:id', (req, res) => controllerDepense.getOneDepense(req, res));
+app.get('/getDepensesFromUser/:id', (req, res) => controllerDepense.getDepensesFromUser(req, res));
+app.get('/getDepensesWhereUserIsConcerned/:id', (req, res) => controllerDepense.getDepensesWhereUserIsConcerned(req, res));
+app.delete('/deleteDepense/:id', (req, res) => controllerDepense.deleteDepense(req, res));
+app.post("/insertDepense", (req, res) => controllerDepense.insertDepense(req, res));
+app.put('/updateDepense/:id', (req, res) => controllerDepense.updateDepense(req, res));
+app.post('/addUserConcerneToDepense/:id', (req, res) => controllerDepense.addUserConcerneToDepense(req, res));
+app.delete('/removeUserConcerneToDepense/:id', (req, res) => controllerDepense.removeUserConcerneToDepense(req, res));
+// Requêtes Catégories de dépenses
+app.get('/CategoriesDepense', (req, res) => controllerCategorieDepense.getCategorieDepenses(req, res));
+app.get('/getCategorieDepense/:id', (req, res) => controllerCategorieDepense.getOneCategorieDepense(req, res));
+app.delete('/deleteCategorieDepense/:id', (req, res) => controllerCategorieDepense.deleteCategorieDepense(req, res));
+app.post("/insertCategorieDepense", (req, res) => controllerCategorieDepense.insertCategorieDepense(req, res));
+app.put('/updateCategorieDepense/:id', (req, res) => controllerCategorieDepense.updateCategorieDepense(req, res));
+// Requêtes utilisateurs
 app.post("/login", (req, res) => controllerUser.login(req, res));
+app.get("/getUsers", (req, res) => controllerUser.getUsers(req, res));
+app.get("/getUserInfo/:id", (req, res) => controllerUser.getUserInfo(req, res));
 app.post('/insertUser', (req, res) => controllerUser.insertUser(req, res));
+app.delete('/deleteUser/:id', (req, res) => controllerUser.deleteUser(req, res));
 app.listen(3000, () => {
     "Serveur listening on port :3000";
 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield mongoose.connect('mongodb://localhost/Gestion_stock');
+        yield mongoose.connect('mongodb://localhost/Gestion_depenses');
         console.log("connected to mongodb");
     });
 }
