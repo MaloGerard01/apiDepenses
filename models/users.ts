@@ -49,9 +49,6 @@ export class User {
     body: { prenom:string, nom: string, mdp: string, email: string , }
   ) {
 // a faire
-
-
-    //return UserModel.findOneAndUpdate({ _id: id }, { nom: body.nom, mdp: body.type, aliments: body.aliments, prix: body.prix } )
   }
 
   public static async deleteUser(id: string): Promise<any> {

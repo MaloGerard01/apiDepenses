@@ -74,7 +74,6 @@ class User {
     static updateUser(id, body) {
         return __awaiter(this, void 0, void 0, function* () {
             // a faire
-            //return UserModel.findOneAndUpdate({ _id: id }, { nom: body.nom, mdp: body.type, aliments: body.aliments, prix: body.prix } )
         });
     }
     static deleteUser(id) {

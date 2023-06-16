@@ -51,27 +51,6 @@ class ControllerUser {
             }
         });
     }
-    updateUser(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (req.body == null || req.body.constructor === Object && Object.keys(req.body).length === 0) {
-                res.status(406);
-                res.send();
-            }
-            else if (req.body.nom == "" || req.body.nom == undefined
-                || req.body.type == "" || req.body.type == undefined
-                || req.body.aliments == "[]" || req.body.aliments == undefined
-                || req.body.prix == "" || req.body.prix == undefined) {
-                res.status(400);
-                res.send();
-            }
-            else {
-                let UserId = req.params.id;
-                let UserDetail = yield users_1.User.updateUser(UserId, req.body);
-                res.status(201);
-                res.send(UserDetail);
-            }
-        });
-    }
     deleteUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             if (req.params.id == null) {
